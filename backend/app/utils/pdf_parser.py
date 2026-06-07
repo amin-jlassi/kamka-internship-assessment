@@ -2,12 +2,9 @@ import pdfplumber
 
 
 class PDFParser:
-    def __init__(self, file_path: str):
-        self.file_path = file_path
-
-    def extract_text(self) -> str:
+    def extract_text(self , file_path : str) -> str:
         """Text extraction without page metadata."""
-        with pdfplumber.open(self.file_path) as pdf:
+        with pdfplumber.open(file_path) as pdf:
             pages = []
             for page in pdf.pages:
                 text = page.extract_text()
@@ -15,13 +12,13 @@ class PDFParser:
                     pages.append(text)
         return "\n".join(pages)
 
-    def extract_text_with_metadata(self) -> list[dict]:
+    def extract_text_with_metadata(self , file_path : str) -> list[dict]:
         """
         Returns text per page with page number 
         output: [{"text": "...", "page_number": 1}, ...]
         """
         pages = []
-        with pdfplumber.open(self.file_path) as pdf:
+        with pdfplumber.open(file_path) as pdf:
             for i, page in enumerate(pdf.pages):
                 text = page.extract_text()
                 if text:
