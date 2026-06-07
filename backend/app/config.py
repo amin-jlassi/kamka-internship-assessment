@@ -4,6 +4,9 @@ from functools import lru_cache  # type: ignore
 
 class Settings(BaseSettings):
     
+    #chunking
+    chunk_size: int = 800
+    chunk_overlap: int = 150
     
     class Config:
         env_file = ".env"
