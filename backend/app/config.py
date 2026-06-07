@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     # chromadb
     chroma_database_folder_location: str = "./chroma_db"
     chroma_collection_name: str = "documents"
+    k_index = 5
     
     class Config:
         env_file = ".env"
