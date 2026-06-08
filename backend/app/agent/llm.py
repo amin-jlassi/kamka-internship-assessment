@@ -1,8 +1,10 @@
+from functools import lru_cache
 from app.config import get_settings
 
 settings = get_settings()
 
 
+@lru_cache()
 def get_llm():
     if settings.llm_provider == "google":
         from langchain_google_genai import ChatGoogleGenerativeAI #type: ignore

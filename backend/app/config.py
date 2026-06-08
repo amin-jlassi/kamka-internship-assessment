@@ -20,11 +20,11 @@ class Settings(BaseSettings):
     
     #llm provider
     
-    llm_provider: str = "ollama"  
+    llm_provider: str = "google"  
     
     #google
     google_api_key: str 
-    model_name: str = "gemini-2.5-flash"
+    model_name: str = "gemini-3.5-flash"
     
     #ollama
     ollama_host: str = "http://localhost:11434"
