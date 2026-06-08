@@ -6,11 +6,11 @@ from app.agent.state import AgentState
 
 def test_agent_graph():
     state = AgentState(
-        query="c'est quoi une arbre ?" ,
+        query="cest quoi une arbre" ,
         tool="",
         context=[] , 
         answer="" , 
-        filename= None ,     
+        filename= None  ,     
     )
 
     result = agent.invoke(state)
@@ -20,3 +20,5 @@ def test_agent_graph():
 if __name__ == "__main__":
     result = test_agent_graph()
     print(f"chunks_length: {len(result['context'])}" , f"answer: {result['answer']}")
+    for chunk in result["context"] :
+        print(f"chunk text : {chunk['text'][:100]}..." , f"metadata : {chunk['metadata']} " , f"score : {chunk['score']}")

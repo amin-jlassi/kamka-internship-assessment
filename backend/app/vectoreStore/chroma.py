@@ -64,12 +64,12 @@ class VectorStore :
         return chunks
     def get_document_chunks_by_filename(self , filename : str) -> list[dict] :
         """retrieve all the chunks of a document using its filename"""
-        res = self.collection.query(
-            include = ["documents", "metadatas" , "distances"] , 
+        res = self.collection.get(
+            include = ["documents", "metadatas"] , 
             where = {"filename" : filename}
         )
         chunks = []
-        for text , metadata in zip(res["documents"][0] , res["metadatas"][0]) : 
+        for text , metadata in zip(res["documents"] , res["metadatas"]) : 
             chunks.append({
                     "text" : text , 
                     "metadata" : metadata
