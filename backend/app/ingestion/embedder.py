@@ -1,6 +1,12 @@
 from sentence_transformers import SentenceTransformer # type: ignore
 from app.config import get_settings
 
+"""
+Embedder class for generating vector embeddings from text chunks.
+
+"""
+
+
 settings = get_settings()
 
 class Embedder:

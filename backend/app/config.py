@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings  # type: ignore
 from functools import lru_cache  # type: ignore
 
 
+
 class Settings(BaseSettings):
     
     #chunking
@@ -16,9 +17,18 @@ class Settings(BaseSettings):
     chroma_collection_name: str = "documents"
     k_index: int = 5
     
+    
+    #agent
+    google_api_key: str 
+    model_name: str = "gemini-2.5-flash"
+    
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"
+        
+
         
         
 @lru_cache()

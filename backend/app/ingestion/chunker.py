@@ -1,6 +1,17 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter # type: ignore
 from app.config import get_settings
 
+"""
+Chunker class for splitting text into manageable chunks while preserving metadata.
+- Uses RecursiveCharacterTextSplitter from langchain_text_splitters.
+- Configured with chunk size and overlap from application settings.
+- Provides methods for chunking plain text and page-aware content with metadata.
+
+
+"""
+
+
+
 settings = get_settings()
 
 class Chunker:

@@ -20,6 +20,11 @@ it returns a list of dictionnarys which are the chunks which context is similar 
 
 output : [{"text": "...", "metadata" :{"filename" : "...","page_number": 1, "chunk_index": 0,} , "score": 1.0 }, ...]
 
+- get_document_chunks_by_filename method : used for retrieving all the chunks of a document using its filename
+params : filename : the name of the document (pdf)
+it returns a list of dictionnarys which are the chunks of the document and their metadata
+output : [{"text": "...", "metadata" :{"filename" : "...","page_number": 1, "chunk_index": 0,} }, ...]
+
 """
 
 
@@ -54,6 +59,20 @@ class VectorStore :
                     "text" : text , 
                     "metadata" : metadata , 
                     "score" : round(1-distance , 3) 
+            })
+        
+        return chunks
+    def get_document_chunks_by_filename(self , filename : str) -> list[dict] :
+        """retrieve all the chunks of a document using its filename"""
+        res = self.collection.query(
+            include = ["documents", "metadatas" , "distances"] , 
+            where = {"filename" : filename}
+        )
+        chunks = []
+        for text , metadata in zip(res["documents"][0] , res["metadatas"][0]) : 
+            chunks.append({
+                    "text" : text , 
+                    "metadata" : metadata
             })
         
         return chunks
