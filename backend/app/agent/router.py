@@ -1,6 +1,6 @@
-from langchain_google_genai import ChatGoogleGenerativeAI #type: ignore
 from app.agent.state import AgentState
 from app.config import get_settings
+from app.agent.llm import get_llm
 
 
 
@@ -15,7 +15,7 @@ The selected tool is then stored in the state under the "tool" key.
 
 
 settings = get_settings()
-llm = ChatGoogleGenerativeAI(model=settings.model_name, temperature=0 , api_key=settings.google_api_key)
+llm = get_llm()
 
 RouterPrompt = """
 You are a routing assistant. Given a user query, decide which tool to use.
@@ -35,8 +35,12 @@ def router_node(state: AgentState) -> AgentState:
     prompt = RouterPrompt.format(query=state["query"])
     response = llm.invoke(prompt)
     tool = response.content.strip().lower()
-    
-    if tool not in ['retrieval', 'summarize', 'calculator']:
+    print("selected tool is : " , tool)
+    if "retrieval" in tool : #local model mistral hillucinates the answer and is not responding with one word in retrieval case
+        state['tool'] = "retrieval"
+        
+    elif tool not in ['retrieval', 'summarize', 'calculator']:
         raise ValueError(f"Invalid tool selected: {tool}")
-    state["tool"] = tool
+    else :
+        state["tool"] = tool
     return state

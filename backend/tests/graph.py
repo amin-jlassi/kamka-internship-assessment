@@ -6,7 +6,7 @@ from app.agent.state import AgentState
 
 def test_agent_graph():
     state = AgentState(
-        query="summarize the content of the file" ,
+        query="150 * 150 ?" ,
         tool="",
         context=[] , 
         answer="" , 

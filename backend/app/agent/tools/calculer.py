@@ -1,9 +1,9 @@
 from app.config import get_settings
-from langchain_google_genai import ChatGoogleGenerativeAI #type: ignore
 from app.agent.state import AgentState
+from app.agent.llm import get_llm
 
 settings = get_settings()
-llm = ChatGoogleGenerativeAI(model=settings.model_name, temperature=0 , api_key=settings.google_api_key)
+llm = get_llm()
 
 
 CalculatorPrompt = """

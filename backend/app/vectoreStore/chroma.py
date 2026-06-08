@@ -1,7 +1,7 @@
 import chromadb  # type: ignore
 from app.config import get_settings 
 import uuid 
-
+import os
 
 
 
@@ -79,6 +79,9 @@ class VectorStore :
     def delete_document_by_filename(self , filename : str) -> None :
         """delete all the chunks of a document using its filename"""
         self.collection.delete(where = {"filename" : filename})
+        file_path = "uploads\\" + filename
+        if os.path.exists(file_path) :
+            os.remove(file_path)
         
     
         

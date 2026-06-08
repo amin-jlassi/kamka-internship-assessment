@@ -18,9 +18,17 @@ class Settings(BaseSettings):
     k_index: int = 5
     
     
-    #agent
+    #llm provider
+    
+    llm_provider: str = "ollama"  
+    
+    #google
     google_api_key: str 
     model_name: str = "gemini-2.5-flash"
+    
+    #ollama
+    ollama_host: str = "http://localhost:11434"
+    ollama_model_name: str = "mistral"
     
     
     class Config:

@@ -1,6 +1,6 @@
-from langchain_google_genai import ChatGoogleGenerativeAI #type: ignore
 from app.agent.state import AgentState
 from app.config import get_settings
+from app.agent.llm import get_llm
 
 
 """
@@ -13,7 +13,7 @@ If the answer is already present in the state, it simply returns the state witho
 
 
 settings = get_settings()
-llm = ChatGoogleGenerativeAI(model=settings.model_name, temperature=0 , api_key=settings.google_api_key)
+llm = get_llm()
 
 ANSWER_PROMPT = """
 You are a document assistant. Answer the user's question using ONLY the context provided.
