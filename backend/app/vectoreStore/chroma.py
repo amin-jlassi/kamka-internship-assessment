@@ -76,5 +76,10 @@ class VectorStore :
             })
         
         return chunks
+    def delete_document_by_filename(self , filename : str) -> None :
+        """delete all the chunks of a document using its filename"""
+        self.collection.delete(where = {"filename" : filename})
+        
+    
         
         

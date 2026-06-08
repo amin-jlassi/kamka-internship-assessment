@@ -43,6 +43,7 @@ async def upload_file(file: UploadFile = File(...)):
     
     
     try:
+        print(f"ingesting file : {file_path}")
         result = pipeline.ingest(str(file_path))
     except Exception as e:
         os.remove(file_path)

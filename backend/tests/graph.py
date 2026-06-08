@@ -6,11 +6,11 @@ from app.agent.state import AgentState
 
 def test_agent_graph():
     state = AgentState(
-        query="cest quoi une arbre" ,
+        query="summarize the content of the file" ,
         tool="",
         context=[] , 
         answer="" , 
-        filename= None  ,     
+        filename= "Chapitre7 les Arbres.pptx.pdf"  ,     
     )
 
     result = agent.invoke(state)

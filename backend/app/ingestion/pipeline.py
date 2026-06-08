@@ -3,6 +3,17 @@ from app.ingestion.chunker import Chunker
 from app.ingestion.embedder import Embedder
 from app.vectoreStore.chroma import VectorStore
 
+"""
+Pipeline class orchestrates the entire RAG process:
+1. Ingestion:
+    - Determines file type (PDF or TXT) and extracts text with metadata.
+    - Chunks the text while preserving page number metadata.
+    - Generates embeddings for each chunk.
+    - Stores chunks and embeddings in the vector database.
+2. Querying:
+    - Embeds the input query.
+    - Retrieves relevant chunks from the vector database based on embedding similarity.
+"""
 
 
 class Pipeline : 
@@ -13,7 +24,8 @@ class Pipeline :
         self.vectorStore = VectorStore()
     def ingest(self , file_path : str) -> dict : 
         extension = file_path.split(".")[-1]
-        filename = file_path.split("/")[-1]
+        filename = file_path.split("\\")[-1]
+        print(f"ingesting file : {filename} with extension : {extension}")
         if extension == "pdf" :
             data = self.pdfParser.extract_text_with_metadata(file_path)
         elif extension == "txt" :
