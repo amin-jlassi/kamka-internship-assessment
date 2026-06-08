@@ -4,17 +4,28 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
-} from "@/components/ui/sidebar"
+  SidebarGroupLabel
+} from "@/components/ui/sidebar";
+import { Button } from "./ui/button";
+
 
 export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader />
       <SidebarContent>
-        <SidebarGroup />
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-md">
+            Documents
+          </SidebarGroupLabel>
+        </SidebarGroup>
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <Button className="relative bottom-12">
+          Upload resource
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   )
 }
