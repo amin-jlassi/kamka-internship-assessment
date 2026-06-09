@@ -55,7 +55,7 @@ async def upload_file(file: UploadFile = File(...)):
         }
 
 
-@router.get("/files")
+@router.get("/documents")
 def list_files():
-    files = [f.name for f in UPLOAD_DIR.iterdir() if f.is_file()]
-    return {"files": files}
+    documents = [f.name for f in UPLOAD_DIR.iterdir() if f.is_file()]
+    return {"documents": documents}
