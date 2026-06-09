@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, status
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, status  # type: ignore
+from pydantic import BaseModel # type: ignore
 
 from app.config import get_settings
 
@@ -15,10 +15,10 @@ class LlmRequest(BaseModel):
 async def chat(request: LlmRequest):
     
     if request.model_name == "gemini-3.5-flash":
-        settings.model_name = "gemini-3.5-flash"
+        settings.llm_provider = "google"
 
     elif "Mistral" in request.model_name :
-        settings.model_name = "mistral"
+        settings.llm_provider = "ollama"
 
     else:
         raise HTTPException(
@@ -27,5 +27,5 @@ async def chat(request: LlmRequest):
         )
 
     return {
-        "model": settings.model_name
+        "model": settings.llm_provider
     }

@@ -34,6 +34,7 @@ Query: {query}
 def router_node(state: AgentState) -> AgentState:
     prompt = RouterPrompt.format(query=state["query"])
     response = llm.invoke(prompt)
+    print(response.content)
     tool = response.content.strip().lower()
     print("selected tool is : " , tool)
     if "retrieval" in tool : #local model mistral hillucinates the answer and is not responding with one word in retrieval case

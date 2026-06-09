@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     
     #llm provider
     
-    llm_provider: str = "google"  
+    llm_provider: str = "ollama"  
     
     #google
     google_api_key: str 

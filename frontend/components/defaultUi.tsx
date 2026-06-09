@@ -3,9 +3,11 @@ import { FileText, Send } from "lucide-react";
 import { Input } from "./ui/input";
 
 const DefaultUi = ({
+  setMainScreen,
   query,
   setQuery,
 }: {
+  setMainScreen: React.Dispatch<React.SetStateAction<boolean>>;
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
 }) => {
@@ -13,8 +15,6 @@ const DefaultUi = ({
     <div className="flex items-center justify-center w-full min-h-[80vh] px-4">
       <div className="w-full max-w-3xl">
         <div className="text-center mb-8">
-          
-
           <h1 className="text-4xl font-bold tracking-tight text-primary/90">
             Ask anything about your documents
           </h1>
@@ -42,26 +42,29 @@ const DefaultUi = ({
           />
 
           <button
+            disabled={query == ""}
             type="button"
+            onClick={() => setMainScreen(false)}
             className="
-              absolute
-              right-2
-              top-1/2
-              -translate-y-1/2
-              flex
-              h-10
-              w-10
-              items-center
-              justify-center
-              rounded-md
-              bg-secondary
-              text-white
-              transition
-              hover:bg-ring/20
-               hover:cursor-pointer
-            "
+            disabled:opacity-50 disabled:cursor-not-allowed
+    absolute
+    right-2
+    top-1/2
+    -translate-y-1/2
+    flex
+    h-10
+    w-10
+    items-center
+    justify-center
+    rounded-md
+    bg-secondary
+    text-white
+    transition
+    hover:bg-ring/20
+    hover:cursor-pointer
+  "
           >
-            <Send className="h-4 w-4 text-primary/60 hover:text-primary/70 hover:cursor-pointer" />
+            <Send className="h-4 w-4 text-primary/60 hover:text-primary/70" />
           </button>
         </div>
       </div>

@@ -12,16 +12,18 @@ import {
 import { Button } from "./ui/button";
 import { Spinner } from "./ui/spinner";
 import { useEffect, useRef, useState } from "react";
-import { error } from "console";
+import { toast } from "sonner";
 
 export function AppSidebar() {
   const [loading, setLoading] = useState(false);
   const [documents, setDocuments] = useState<string[]>([]);
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const fetchDocuments = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/documents`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/documents`
       );
 
       if (!response.ok) {
@@ -32,13 +34,13 @@ export function AppSidebar() {
       setDocuments(data.documents);
     } catch (error) {
       console.error("Fetch documents error:", error);
-      throw error;
+      toast.error("Failed to load documents");
     }
   };
-  useEffect(()=>{
-    fetchDocuments()
-  },[])
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
 
   async function uploadDocument(file: File) {
     try {
@@ -50,22 +52,35 @@ export function AppSidebar() {
         {
           method: "POST",
           body: formData,
-        },
+        }
       );
 
       if (!response.ok) {
-        const error = await response.text()
+        const error = await response.text();
         throw new Error(error || "upload failed");
       }
 
-      return await response.json();
+      const data = await response.json();
+
+      toast.success("Document uploaded successfully ");
+
+      return data;
     } catch (error) {
       console.error("Upload error:", error);
+
+      toast.error(
+        error instanceof Error ? error.message : "Upload failed" , {
+          duration : 7000 , 
+        }
+      );
+
       throw error;
     }
   }
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -77,8 +92,6 @@ export function AppSidebar() {
       if (data?.filename) {
         setDocuments((prev) => [...prev, data.filename]);
       }
-    } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -90,13 +103,19 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-md">Documents</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-md">
+            Documents
+          </SidebarGroupLabel>
 
           <div className="px-2 text-sm text-muted-foreground">
             {documents.length === 0 ? (
-              <p className="text-xs px-1">No documents uploaded yet.</p>
+              <p className="text-xs px-1">
+                No documents uploaded yet.
+              </p>
             ) : (
-              documents.map((document, i) => <div key={i}>• {document}</div>)
+              documents.map((document, i) => (
+                <div key={i}>• {document}</div>
+              ))
             )}
           </div>
         </SidebarGroup>
