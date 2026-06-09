@@ -44,8 +44,8 @@ export default function LlmListe() {
         setError(response.detail || "Failed to change model!");
         return;
       }
-
-      if(response.model == "mistral"){
+      console.log(response)
+      if(response.model == "ollama"){
         setSelectedValue("Mistral 7b (local)");
       }else{
         setSelectedValue("gemini-3.5-flash")

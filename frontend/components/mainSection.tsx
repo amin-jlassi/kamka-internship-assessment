@@ -1,54 +1,104 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import DefaultUi from "./defaultUi";
-import { Send } from "lucide-react";
+import { FileText, Send, ChevronRight, ChevronDown } from "lucide-react";
 import { Input } from "./ui/input";
 import { Spinner } from "./ui/spinner";
 
-const MainSection = () => {
-  const [mainScreen, setMainScreen] = useState<boolean>(true);
-  const [query, setQuery] = useState<string>("");
-  const [answer_response, setAnswer_response] = useState<
-    { query: string; answer: string }[]
-  >([]);
-  const [laoding, setLoading] = useState<boolean>(true);
+type Source = {
+  text: string;
+  metadata: {
+    filename: string;
+    page_number: number;
+    chunk_index: number;
+  };
+};
 
-  const getAnswer = async (query: string) => {
+type Message = {
+  query: string;
+  answer: string;
+  sources: Source[];
+};
+
+const MainSection = () => {
+  const [mainScreen, setMainScreen] = useState(true);
+  const [query, setQuery] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const [openSources, setOpenSources] = useState<number[]>([]);
+
+  const toggleSources = (messageIndex: number) => {
+    setOpenSources((prev) =>
+      prev.includes(messageIndex)
+        ? prev.filter((i) => i !== messageIndex)
+        : [...prev, messageIndex],
+    );
+  };
+
+  const getAnswer = async (question: string) => {
+    if (!question.trim()) return;
+
+    setError("");
+    setQuery("");
+
+    const newMessage: Message = {
+      query: question,
+      answer: "",
+      sources: [],
+    };
+
+    setMessages((prev) => [...prev, newMessage]);
+
+    const messageIndex = messages.length;
+
+    setLoading(true);
+
     try {
-      setAnswer_response((prev) => [...prev, { query: query, answer: "" }]);
-      setLoading(true);
       const request = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ query: query, filename: null }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            query: question,
+            filename: null,
+          }),
         },
       );
-      if (request.ok) {
-        const response = await request.json();
-        console.log(response);
-        setLoading(false);
-        setAnswer_response((prev) =>
-          prev.map((item, index) =>
-            index === prev.length - 1
-              ? { ...item, answer: response.answer }
-              : item,
-          ),
-        );
-      } else {
-        setLoading(false);
-      }
-    } catch (err) {
-      setLoading(false);
-      console.log(err);
-    }
 
-    setQuery("");
+      if (!request.ok) {
+        throw new Error("Failed to get a response from the server");
+      }
+
+      const response = await request.json();
+
+      setMessages((prev) =>
+        prev.map((item, index) =>
+          index === messageIndex
+            ? {
+                ...item,
+                answer: response.answer,
+                sources: response.sources ?? [],
+              }
+            : item,
+        ),
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred",
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    if (mainScreen == false) {
+    if (!mainScreen && query.trim()) {
       getAnswer(query);
     }
   }, [mainScreen]);
@@ -64,46 +114,112 @@ const MainSection = () => {
       )}
 
       {!mainScreen && (
-        <div className="w-[90%] m-auto">
-          <div className="w-full mt-12">
-            {answer_response.map((item, index) => (
-              <div className="w-full" key={index}>
-                {/* user query */}
+        <div className="w-[90%] mx-auto pb-32">
+          <div className="w-full mt-12 space-y-6">
+            {messages.map((item, index) => (
+              <div key={index}>
+                {/* User Message */}
                 <div className="flex justify-end">
-                  <div className="bg-secondary px-4 py-2 rounded-md w-fit mt-4 max-w-[60%] text-right">
+                  <div className="bg-secondary px-4 py-2 rounded-md max-w-[60%] wrap-break-words">
                     {item.query}
                   </div>
                 </div>
-                {/* agent response */}
-                <div className="flex justify-start">
-                  {laoding ? (
-                    <Spinner />
-                  ) : (
-                    <div className=" px-4 py-6 rounded-md w-fit max-w-[full] text-left">
-                      {item.answer}
-                    </div>
-                  )}
+
+                {/* Assistant Message */}
+                <div className="flex justify-start mt-2">
+                  <div className="px-4 py-4 rounded-md max-w-[80%] wrap-break-words">
+                    {item.answer}
+
+                    {item.sources?.length > 0 && (
+                      <div className="mt-4">
+                        <button
+                          onClick={() => toggleSources(index)}
+                          className="flex items-center gap-2 px-3 py-2 rounded-md border bg-secondary/70 hover:bg-secondary transition-colors"
+                        >
+                          <span className="text-xs   font-medium">
+                            {item.sources.length} source
+                            {item.sources.length > 1 ? "s" : ""}
+                          </span>
+                          {openSources.includes(index) ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </button>
+
+                        {openSources.includes(index) && (
+                          <div className="mt-3 space-y-3">
+                            {item.sources.map((source, sourceIndex) => (
+                              <div
+                                key={sourceIndex}
+                                className="rounded-md bg-secondary p-3 border"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <FileText className="text-indigo-500 h-4 w-4" />
+                                  <p className="font-semibold">
+                                    {source.metadata.filename}
+                                  </p>
+                                </div>
+
+                                <div className="flex items-center gap-2 my-2">
+                                  <div className="text-xs px-2 py-1 border rounded-sm bg-indigo-50 border-indigo-300">
+                                    Page {source.metadata.page_number}
+                                  </div>
+
+                                  <div className="text-xs px-2 py-1 border rounded-sm border-indigo-300">
+                                    Chunk {source.metadata.chunk_index + 1}
+                                  </div>
+                                </div>
+
+                                <div className="bg-primary/10 p-2 rounded-md text-sm border-l-2 border-l-indigo-300 whitespace-pre-wrap">
+                                  {source.text}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
+
+            {error && (
+              <div className="bg-red-100 text-red-600 p-3 rounded-md w-fit">
+                {error}
+              </div>
+            )}
+
+            {loading && (
+              <div className="flex justify-start">
+                <Spinner />
+              </div>
+            )}
           </div>
 
-          <div className="fixed bottom-5 mr-45 right-0 w-[70%]">
-            <div>
+          {/* Input */}
+          <div className="fixed bottom-5 right-5 w-[70%] bg-white z-50">
+            <div className="relative">
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && query.trim()) {
+                    getAnswer(query);
+                  }
+                }}
                 placeholder="Ask anything about your documents..."
                 className="h-14 rounded-md pr-14 text-base shadow-sm border-border/60 focus-visible:ring-1 focus-visible:border-ring/20"
               />
 
               <button
-                disabled={query == ""}
-                onClick={() => getAnswer(query)}
                 type="button"
-                className="absolute disabled:opacity-50 disabled:cursor-not-allowed right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-md bg-secondary text-white transition hover:bg-ring/20 hover:cursor-pointer"
+                disabled={!query.trim() || loading}
+                onClick={() => getAnswer(query)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-md bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Send className="h-4 w-4 text-primary/60 hover:text-primary/70 hover:cursor-pointer" />
+                <Send className="h-4 w-4 text-primary/70" />
               </button>
             </div>
           </div>

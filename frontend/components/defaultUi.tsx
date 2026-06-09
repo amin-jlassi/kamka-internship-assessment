@@ -45,6 +45,11 @@ const DefaultUi = ({
             disabled={query == ""}
             type="button"
             onClick={() => setMainScreen(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setMainScreen(false);
+              }
+            }}
             className="
             disabled:opacity-50 disabled:cursor-not-allowed
     absolute
