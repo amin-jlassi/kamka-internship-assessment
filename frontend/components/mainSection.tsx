@@ -118,14 +118,14 @@ const MainSection = () => {
           <div className="w-full mt-12 space-y-6">
             {messages.map((item, index) => (
               <div key={index}>
-                {/* User Message */}
+                {/* user message */}
                 <div className="flex justify-end">
                   <div className="bg-secondary px-4 py-2 rounded-md max-w-[60%] wrap-break-words">
                     {item.query}
                   </div>
                 </div>
 
-                {/* Assistant Message */}
+                {/* agent  answer */}
                 <div className="flex justify-start mt-2">
                   <div className="px-4 py-4 rounded-md max-w-[80%] wrap-break-words">
                     {item.answer}
@@ -199,28 +199,30 @@ const MainSection = () => {
           </div>
 
           {/* Input */}
-          <div className="fixed bottom-5 right-5 w-[70%] bg-white z-50">
-            <div className="relative">
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && query.trim()) {
-                    getAnswer(query);
-                  }
-                }}
-                placeholder="Ask anything about your documents..."
-                className="h-14 rounded-md pr-14 text-base shadow-sm border-border/60 focus-visible:ring-1 focus-visible:border-ring/20"
-              />
-
-              <button
-                type="button"
-                disabled={!query.trim() || loading}
-                onClick={() => getAnswer(query)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-md bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Send className="h-4 w-4 text-primary/70" />
-              </button>
+          <div className=" rounded-md fixed bottom-5 left-1/2 -translate-x-1/2 w-[70%]   z-50">
+            
+            <div className="w-full max-w-3xl bg-white">
+              <div className="relative">
+                <Input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && query.trim()) {
+                      getAnswer(query);
+                    }
+                  }}
+                  placeholder="Ask anything about your documents..."
+                  className="h-14 rounded-md pr-14 text-base shadow-sm border-border/60 focus-visible:ring-1 focus-visible:border-ring/20"
+                />
+                <button
+                  type="button"
+                  disabled={!query.trim() || loading}
+                  onClick={() => getAnswer(query)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-md bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send className="h-4 w-4 text-primary/70" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

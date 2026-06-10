@@ -15,7 +15,7 @@ The selected tool is then stored in the state under the "tool" key.
 
 
 settings = get_settings()
-llm = get_llm()
+
 
 RouterPrompt = """
 You are a routing assistant. Given a user query, decide which tool to use.
@@ -32,6 +32,7 @@ Query: {query}
 """
 
 def router_node(state: AgentState) -> AgentState:
+    llm = get_llm()
     prompt = RouterPrompt.format(query=state["query"])
     response = llm.invoke(prompt)
     print(response.content)

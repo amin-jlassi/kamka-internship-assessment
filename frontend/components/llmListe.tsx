@@ -45,7 +45,7 @@ export default function LlmListe() {
         return;
       }
       console.log(response)
-      if(response.model == "ollama"){
+      if(response.model == "Mistral 7b (local)"){
         setSelectedValue("Mistral 7b (local)");
       }else{
         setSelectedValue("gemini-3.5-flash")
