@@ -78,7 +78,9 @@ const MainSection = ({
       );
 
       if (!request.ok) {
-        throw new Error("Failed to get a response from the server");
+        const errorData = await request.json()
+        console.log(errorData)
+        throw new Error(errorData.detail || "Failed to get a response from the server");
       }
 
       const response = await request.json();

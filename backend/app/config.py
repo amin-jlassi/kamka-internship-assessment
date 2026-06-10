@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings  # type: ignore
 from functools import lru_cache  # type: ignore
-
+from app.agent.db.models import get_llm_provider
 
 
 class Settings(BaseSettings):
@@ -15,12 +15,12 @@ class Settings(BaseSettings):
     # chromadb
     chroma_database_folder_location: str = "./chroma_db"
     chroma_collection_name: str = "documents"
-    k_index: int = 5
+    k_index: int = 3
     
     
     #llm provider
     
-    llm_provider: str = "ollama"  
+    llm_provider: str = "google"
     
     #google
     google_api_key: str 

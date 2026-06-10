@@ -1,6 +1,6 @@
 from app.agent.state import AgentState
 from app.config import get_settings
-from app.agent.llm import get_llm
+from app.agent.llm import get_llm , extract_content
 
 
 """
@@ -40,6 +40,6 @@ def answer_node(state: AgentState) -> AgentState:
         query=state["query"]
     )
     response = llm.invoke(prompt)
-    state["answer"] = response.content.strip()
+    state["answer"] = extract_content(response).strip()
 
     return state

@@ -1,6 +1,6 @@
 from app.agent.state import AgentState
 from app.config import get_settings
-from app.agent.llm import get_llm
+from app.agent.llm import get_llm , extract_content
 
 
 
@@ -36,7 +36,7 @@ def router_node(state: AgentState) -> AgentState:
     prompt = RouterPrompt.format(query=state["query"])
     response = llm.invoke(prompt)
     print(response.content)
-    tool = response.content.strip().lower()
+    tool = extract_content(response).strip().lower()
     print("selected tool is : " , tool)
     if "retrieval" in tool : #local model mistral hillucinates the answer and is not responding with one word in retrieval case
         state['tool'] = "retrieval"

@@ -1,9 +1,12 @@
 from fastapi import FastAPI  # type: ignore
+from app.agent.db.models import init_db
+init_db()
 from app.config import get_settings  
 from app.api.routes.documents import router as documents_router
 from app.api.routes.chat import router as chat_router
 from app.api.routes.llm import router as llm_router
 from fastapi.middleware.cors import CORSMiddleware  # type: ignore
+
 app = FastAPI()
 origins = [
     "http://localhost:3000",  
