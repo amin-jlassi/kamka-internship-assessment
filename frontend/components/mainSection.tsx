@@ -21,7 +21,13 @@ type Message = {
   sources: Source[];
 };
 
-const MainSection = () => {
+const MainSection = ({
+  selectedDocument,
+  setSelectedDocument,
+}: {
+  selectedDocument: string;
+  setSelectedDocument: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const [mainScreen, setMainScreen] = useState(true);
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -66,7 +72,7 @@ const MainSection = () => {
           },
           body: JSON.stringify({
             query: question,
-            filename: null,
+            filename: selectedDocument || null,
           }),
         },
       );
@@ -110,6 +116,7 @@ const MainSection = () => {
           setMainScreen={setMainScreen}
           query={query}
           setQuery={setQuery}
+          setSelectedDocument={setSelectedDocument}
         />
       )}
 
@@ -200,7 +207,6 @@ const MainSection = () => {
 
           {/* Input */}
           <div className=" rounded-md fixed bottom-5 left-1/2 -translate-x-1/2 w-[70%]   z-50">
-            
             <div className="w-full max-w-3xl bg-white">
               <div className="relative">
                 <Input
@@ -210,6 +216,15 @@ const MainSection = () => {
                     if (e.key === "Enter" && query.trim()) {
                       getAnswer(query);
                     }
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const docName = e.dataTransfer.getData("document");
+                    setSelectedDocument(docName);
+                    setQuery((prev) =>
+                      prev.includes(docName) ? prev : prev + `@${docName}`,
+                    );
                   }}
                   placeholder="Ask anything about your documents..."
                   className="h-14 rounded-md pr-14 text-base shadow-sm border-border/60 focus-visible:ring-1 focus-visible:border-ring/20"

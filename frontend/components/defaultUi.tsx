@@ -6,10 +6,12 @@ const DefaultUi = ({
   setMainScreen,
   query,
   setQuery,
+  setSelectedDocument
 }: {
   setMainScreen: React.Dispatch<React.SetStateAction<boolean>>;
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedDocument: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   return (
     <div className="flex items-center justify-center w-full min-h-[80vh] px-4">
@@ -27,8 +29,20 @@ const DefaultUi = ({
         <div className="relative">
           <Input
             value={query}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setMainScreen(false);
+              }
+            }}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Ask anything about your documents..."
+            onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const docName = e.dataTransfer.getData("document");
+                    setSelectedDocument(docName) ; 
+                    setQuery((prev)=> prev.includes(docName)?prev : prev + `@${docName}` )
+                  }}
             className="
               h-14
               rounded-md
@@ -45,11 +59,7 @@ const DefaultUi = ({
             disabled={query == ""}
             type="button"
             onClick={() => setMainScreen(false)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setMainScreen(false);
-              }
-            }}
+            
             className="
             disabled:opacity-50 disabled:cursor-not-allowed
     absolute

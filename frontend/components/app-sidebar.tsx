@@ -11,10 +11,14 @@ import {
 
 import { Button } from "./ui/button";
 import { Spinner } from "./ui/spinner";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-export function AppSidebar() {
+export function AppSidebar({
+  setSelectedDocument,
+}: {
+  setSelectedDocument: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const [loading, setLoading] = useState(false);
   const [documents, setDocuments] = useState<string[]>([]);
 
@@ -23,7 +27,7 @@ export function AppSidebar() {
   const fetchDocuments = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/documents`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/documents`,
       );
 
       if (!response.ok) {
@@ -52,7 +56,7 @@ export function AppSidebar() {
         {
           method: "POST",
           body: formData,
-        }
+        },
       );
 
       if (!response.ok) {
@@ -68,19 +72,15 @@ export function AppSidebar() {
     } catch (error) {
       console.error("Upload error:", error);
 
-      toast.error(
-        error instanceof Error ? error.message : "Upload failed" , {
-          duration : 7000 , 
-        }
-      );
+      toast.error(error instanceof Error ? error.message : "Upload failed", {
+        duration: 7000,
+      });
 
       throw error;
     }
   }
 
-  const handleFileChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -103,18 +103,22 @@ export function AppSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-md">
-            Documents
-          </SidebarGroupLabel>
+          <SidebarGroupLabel className="text-md">Documents</SidebarGroupLabel>
 
           <div className="px-2 text-sm text-muted-foreground">
             {documents.length === 0 ? (
-              <p className="text-xs px-1">
-                No documents uploaded yet.
-              </p>
+              <p className="text-xs px-1">No documents uploaded yet.</p>
             ) : (
               documents.map((document, i) => (
-                <div key={i}>• {document}</div>
+                <div
+                  key={i}
+                  draggable
+                  onDragStart={(e) =>
+                    e.dataTransfer.setData("document", document)
+                  }
+                >
+                  • {document}
+                </div>
               ))
             )}
           </div>
