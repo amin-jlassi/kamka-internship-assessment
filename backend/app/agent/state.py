@@ -8,3 +8,9 @@ class AgentState(TypedDict):
     context : list[dict]
     answer : str
     filename: str | None
+    
+    
+    
+    
+    
+    
